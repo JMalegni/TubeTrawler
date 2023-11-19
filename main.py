@@ -103,12 +103,14 @@ def video_data(video_id):
 
                 dataRows = [[clear_emojis(comment), commentLikes, replies,]]
 
+                try:
+                    # creating a csv writer object
+                    csvwriter = csv.writer(csvfile)
 
-                # creating a csv writer object
-                csvwriter = csv.writer(csvfile)
-
-                # writing the data rows
-                csvwriter.writerows(dataRows)
+                    # writing the data rows
+                    csvwriter.writerows(dataRows)
+                except(UnicodeEncodeError):
+                    dataRows = []
 
                 # empty reply list
                 replies = []
