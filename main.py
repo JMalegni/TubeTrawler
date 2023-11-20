@@ -5,10 +5,15 @@
 # URL for actual YouTube API Docs - https://developers.google.com/youtube/v3/docs
 # I also made use of a Geeks for geeks article on writing to csv files in python
 # URL - https://www.geeksforgeeks.org/writing-csv-files-in-python/#
+
+# need to install demoji and googleapiclient in the
+# via pip install demoji
+# via pip install --upgrade google-api-python-client
+
 from googleapiclient.discovery import build
 import csv
 import demoji
-# need to install demoji and googleapiclient
+import sys
 
 # this function finds and removes all emojis in a string, I use it because you cannot write emojis to a csv file
 def clear_emojis(string):
@@ -17,16 +22,17 @@ def clear_emojis(string):
         string = string.replace(item, '')
     return string
 
-# This is my personal Youtube API Key, please be careful what videos you use so that I don't run out of API tokens
-api_key = 'AIzaSyD7RmH3pB12AhfaYUfo39gmoJT7gBpDLac'
+# This is my personal YouTube API Key, please be careful what videos you use so that I don't run out of API tokens
 
 
-def video_data(video_id):
+def video_data(argv):
+    api_key = 'AIzaSyD7RmH3pB12AhfaYUfo39gmoJT7gBpDLac'
+    video_id = argv
     # empty list for storing reply
     replies = []
     # initializing statistic variables
     title = ""
-    viewcount = 0
+    viewCount = 0
     totLikes = 0
     numComments = 0
 
@@ -43,11 +49,11 @@ def video_data(video_id):
     # extracting statistics from the video_stats object
     for item in video_stats['items']:
         title = item['snippet']['title']
-        viewcount = item['statistics']['viewCount']
+        viewCount = item['statistics']['viewCount']
         totLikes = item['statistics']['likeCount']
         numComments = item['statistics']['commentCount']
 
-    print(title, " ", viewcount, " ", totLikes, " ", numComments)
+    print(title, " ", viewCount, " ", totLikes, " ", numComments)
 
     # retrieve youtube video results
     video_response = youtube.commentThreads().list(
@@ -59,7 +65,7 @@ def video_data(video_id):
     filename = "test.csv"
 
     # first row of csv file
-    statsRows = [[title, viewcount, totLikes, numComments, ]]
+    statsRows = [[title, viewCount, totLikes, numComments, ]]
 
     # writing to csv file
     with open(filename, 'w') as csvfile:
@@ -126,10 +132,10 @@ def video_data(video_id):
             else:
                 break
 
+if __name__ == "__main__":
 
+    # Enter video id
+    #video_id = "yCZceKHtnWE"
 
-# Enter video id
-video_id = "yCZceKHtnWE"
-
-# Call function
-video_data(video_id)
+    # Call function
+    video_data(sys.argv[1])
