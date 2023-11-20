@@ -36,7 +36,7 @@ def video_data(argv):
     totLikes = 0
     numComments = 0
 
-    # creating youtube resource object
+    # creating YouTube resource object
     youtube = build('youtube', 'v3',
                     developerKey=api_key)
 
@@ -51,11 +51,16 @@ def video_data(argv):
         title = item['snippet']['title']
         viewCount = item['statistics']['viewCount']
         totLikes = item['statistics']['likeCount']
-        numComments = item['statistics']['commentCount']
+        try:
+            numComments = item['statistics']['commentCount']
+        except(KeyError):
+            print("This video has no comments or does not have comments enabled")
+            print(title, " ", viewCount, " ", totLikes, " ", 0)
+            return
 
     print(title, " ", viewCount, " ", totLikes, " ", numComments)
 
-    # retrieve youtube video results
+    # retrieve youtube video comments
     video_response = youtube.commentThreads().list(
         part='snippet,replies',
         videoId=video_id,
@@ -72,14 +77,13 @@ def video_data(argv):
         # creating a csv writer object
         csvwriter = csv.writer(csvfile)
 
-        # writing the data rows
+        # writing the video stats
         csvwriter.writerows(statsRows)
 
-        # iterate video response
+        # iterate through all the comments
         while video_response:
 
-            # extracting required info
-            # from each result object
+            # extracting required info from each result object
             for item in video_response['items']:
 
                 # Extracting comments
@@ -90,10 +94,10 @@ def video_data(argv):
                 commentLikes = item['snippet']['topLevelComment']['snippet']['likeCount']
 
                 # counting number of reply of comment
-                replycount = item['snippet']['totalReplyCount']
+                replyCount = item['snippet']['totalReplyCount']
 
-                # if reply is there
-                if replycount > 0:
+                # if reply exists
+                if replyCount > 0:
 
                     # iterate through all reply
                     for reply in item['replies']['comments']:
@@ -101,24 +105,22 @@ def video_data(argv):
                         reply = reply['snippet']['textDisplay']
                         cleanReply = clear_emojis(reply)
 
-                        # Store reply is list
+                        # Store reply in list
                         replies.append(cleanReply)
 
-                # print comment with list of reply
-                print(clear_emojis(comment), commentLikes, replies, end='\n\n')
-
+                # create a list that will be written to the csv
                 dataRows = [[clear_emojis(comment), commentLikes, replies,]]
 
+                # need a try-catch for when demoji cannot clear all the emojies in the comment
                 try:
-                    # creating a csv writer object
                     csvwriter = csv.writer(csvfile)
 
-                    # writing the data rows
                     csvwriter.writerows(dataRows)
                 except(UnicodeEncodeError):
+                    # replaces the line with an emoji with a blank line
                     dataRows = []
 
-                # empty reply list
+                # clear the list of replies
                 replies = []
 
             # Again repeat
@@ -132,10 +134,8 @@ def video_data(argv):
             else:
                 break
 
+
 if __name__ == "__main__":
 
-    # Enter video id
-    #video_id = "yCZceKHtnWE"
-
-    # Call function
+    # Call function with command line argument 1 which will be the YouTube video ID
     video_data(sys.argv[1])
