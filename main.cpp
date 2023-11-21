@@ -131,6 +131,7 @@ int main() {
     // need to have python as path variable
     //42nrFpATLow is a YouTube video id that is temporary, I will make it so that we can get it as input from the user
     if (!ID.empty()) {
+        //Figured out how to pass a variable to system() with help from user Skurmedel's solution at https://stackoverflow.com/questions/4907805/using-variables-in-system-function-c
         string command = "cd .. && python main.py ";
         command += ID;
         system(command.c_str());
