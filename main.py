@@ -54,7 +54,7 @@ def video_data(argv):
         try:
             numComments = item['statistics']['commentCount']
         except(KeyError):
-            print("This video has no comments or does not have comments enabled")
+            print("This video does not have comments enabled")
             print(title, " ", viewCount, " ", totLikes, " ", 0)
             return
 
