@@ -26,6 +26,7 @@
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/TubeTrawler.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/TubeTrawler.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/test.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,7 +94,7 @@
       <updated>1700508272535</updated>
       <workItem from="1700508274376" duration="11511000" />
       <workItem from="1700546847447" duration="11801000" />
-      <workItem from="1700633982520" duration="1581000" />
+      <workItem from="1700633982520" duration="7259000" />
     </task>
     <servers />
   </component>

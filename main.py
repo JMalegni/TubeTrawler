@@ -15,12 +15,14 @@ import csv
 import demoji
 import sys
 
+
 # this function finds and removes all emojis in a string, I use it because you cannot write emojis to a csv file
 def clear_emojis(string):
     dem = demoji.findall(string)
     for item in dem.keys():
         string = string.replace(item, '')
     return string
+
 
 # This is my personal YouTube API Key, please be careful what videos you use so that I don't run out of API tokens
 
@@ -45,6 +47,16 @@ def video_data(argv):
         part="snippet,statistics",
         id=video_id
     ).execute()
+
+    # this try-catch adds extra input validation, if input passes prev regex but isn't and actual id, it'll get caught
+    # here
+    try:
+        if video_stats['items'][0]['kind'] != 'youtube#video':
+            print("Not a correct YouTube video ID")
+            return
+    except IndexError:
+        print("Not a YouTube video ID")
+        return
 
     # extracting statistics from the video_stats object
     for item in video_stats['items']:
@@ -109,7 +121,7 @@ def video_data(argv):
                         replies.append(cleanReply)
 
                 # create a list that will be written to the csv
-                dataRows = [[clear_emojis(comment), commentLikes, replies,]]
+                dataRows = [[clear_emojis(comment), commentLikes, replies, ]]
 
                 # need a try-catch for when demoji cannot clear all the emojies in the comment
                 try:
@@ -136,6 +148,5 @@ def video_data(argv):
 
 
 if __name__ == "__main__":
-
     # Call function with command line argument 1 which will be the YouTube video ID
     video_data(sys.argv[1])

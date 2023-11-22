@@ -9,25 +9,30 @@ using namespace std;
 
 //WelcomeWindow Function mostly recycled from Joseph's Minesweeper project from COP3503
 string welcomeWindow() {
-    float windowWidth = 1500;
-    float windowHeight = 1500;
+    float windowWidth = 800;
+    float windowHeight = 600;
 
-    sf::RenderWindow welWindow(sf::VideoMode(windowWidth, windowHeight), "Welcome!");
+    sf::RenderWindow welWindow(sf::VideoMode(windowWidth, windowHeight), "TubeTrawler");
 
     // font used with permission - https://www.fontsquirrel.com/fonts/open-sans
     sf::Font font;
     font.loadFromFile("../OpenSans-Regular.ttf");
 
-    string title = "Welcome to TubeTrawler";
-    sf::Text message;
-    message.setFont(font);
-    message.setString(title);
-    message.setCharacterSize(24);
-    message.setFillColor(sf::Color::White);
-    message.setStyle(sf::Text::Bold);
-    sf::FloatRect titleRect = message.getLocalBounds();
-    message.setOrigin(titleRect.left + titleRect.width/2.0f, titleRect.top + titleRect.height/2.0f);
-    message.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f - 150));
+    sf::Text header("TubeTrawler", font, 24);
+    header.setFillColor(sf::Color::White);
+    header.setPosition(10.f, 10.f);
+
+    sf::RectangleShape navBar(sf::Vector2f(800.f, 15.f));
+    navBar.setFillColor(sf::Color(255, 0, 0));  // YouTube red
+    navBar.setPosition(0.f, 50.f);
+
+    // Set up a logo
+    sf::Texture logoTexture;
+    logoTexture.loadFromFile("../tubetrawlerlogo.png");
+
+    sf::Sprite logo(logoTexture);
+    logo.setScale(0.14f, 0.14f);  // Adjust the scale as needed
+    logo.setPosition(675.f, 10.f);
 
     string inputPrompt = "Enter A YouTube Video URL";
     sf::Text inputPromptText;
@@ -49,12 +54,11 @@ string welcomeWindow() {
     user.setFillColor(sf::Color::Black);
     sf::FloatRect userRect = user.getLocalBounds();
     user.setOrigin(userRect.left + userRect.width/2.0f, userRect.top + userRect.height/2.0f);
-    user.setPosition(sf::Vector2f(windowWidth/3.0f+18, windowHeight/2.0f - 45));
+    user.setPosition(sf::Vector2f(windowWidth/3.0f - 100, windowHeight/2.0f - 45));
 
-    sf::RectangleShape textBox(sf::Vector2f(windowWidth/2.75f - 36, 28));
-    textBox.setPosition(sf::Vector2f(windowWidth/3.0f, windowHeight/2.0f - 48));
+    sf::RectangleShape textBox(sf::Vector2f(windowWidth/1.5f - 18, 28));
+    textBox.setPosition(sf::Vector2f(windowWidth/3.0f - 118, windowHeight/2.0f - 48));
     textBox.setFillColor(sf::Color(210,210,210));
-
 
     sf::Clock clock;
 
@@ -87,7 +91,14 @@ string welcomeWindow() {
                 if (event.key.code == sf::Keyboard::Return) {
                     cout << videoURL << endl;
 
-                    string vidId = videoURL.substr(videoURL.size() - 11, 11);
+                    string vidId;
+                    //this try-catch stops error with input size < 11 chars
+                    try {
+                        vidId = videoURL.substr(videoURL.size() - 11, 11);
+                    }
+                    catch (out_of_range&){
+                        videoURL.clear();
+                    }
 
                     //regex to only allow 11 characters, upper and lower case letters, and the '-' symbol
                     regex pattern("[a-zA-Z0-9\\-\\_]{11}");
@@ -122,10 +133,12 @@ string welcomeWindow() {
 
         user.setString(videoURL + (show_cursor ? '_' : ' '));
 
-        welWindow.clear(sf::Color(0,0,255));
+        welWindow.clear(sf::Color(40,40,40)); // youtube "almost black"
         welWindow.draw(textBox);
         welWindow.draw(user);
-        welWindow.draw(message);
+        welWindow.draw(navBar);
+        welWindow.draw(header);
+        welWindow.draw(logo);
         welWindow.draw(inputPromptText);
         welWindow.display();
 
