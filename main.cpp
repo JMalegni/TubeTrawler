@@ -94,7 +94,7 @@ string welcomeWindow() {
                     string vidId;
                     //this try-catch stops error with input size < 11 chars
                     try {
-                        vidId = videoURL.substr(videoURL.size() - 11, 11);
+                        vidId = videoURL.substr(32, 11);
                     }
                     catch (out_of_range&){
                         videoURL.clear();
@@ -103,7 +103,7 @@ string welcomeWindow() {
                     //regex to only allow 11 characters, upper and lower case letters, and the '-' symbol
                     regex pattern("[a-zA-Z0-9\\-\\_]{11}");
 
-                    if (regex_match(vidId, pattern)) {
+                    if (regex_match(vidId, pattern) && videoURL.substr(0,32) == "https://www.youtube.com/watch?v=") {
                         cout << "Input is valid.\n";
                         welWindow.close();
                         return vidId;
