@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <regex>
 
 using namespace std;
 
@@ -85,9 +86,21 @@ string welcomeWindow() {
 
                 if (event.key.code == sf::Keyboard::Return) {
                     cout << videoURL << endl;
-                    welWindow.close();
-                    return videoURL.substr(videoURL.size() - 11, 11);
-                    //TODO:: use substr to just get ID then call next function here
+
+                    string vidId = videoURL.substr(videoURL.size() - 11, 11);
+
+                    //regex to only allow 11 characters, upper and lower case letters, and the '-' symbol
+                    regex pattern("[a-zA-Z0-9\\-\\_]{11}");
+
+                    if (regex_match(vidId, pattern)) {
+                        cout << "Input is valid.\n";
+                        welWindow.close();
+                        return vidId;
+                    } else {
+                        cout << "Input is invalid. Please enter a valid Youtube video URL\n";
+                        //TODO:: add a SFML text that appears when invalid input. possibly a boolean
+                        videoURL.clear();
+                    }
                 }
             }
 
@@ -123,19 +136,19 @@ string welcomeWindow() {
 
 
 int main() {
-    //FIXME:: Needs a lot more input validation but I am very eepy at this moment
     string ID= welcomeWindow();
 
     cout << "---" << ID << "---" << endl;
 
     // need to have python as path variable
-    //42nrFpATLow is a YouTube video id that is temporary, I will make it so that we can get it as input from the user
     if (!ID.empty()) {
         string command = "cd .. && python main.py ";
         command += ID;
         system(command.c_str());
     }
 
+    //FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
+    // prevents functionality, still would like to figure it out though
 
     return 0;
 
