@@ -115,13 +115,13 @@ def video_data(argv):
                     for reply in item['replies']['comments']:
                         # Extract reply
                         reply = reply['snippet']['textDisplay']
-                        cleanReply = clear_emojis(reply)
+                        #cleanReply = clear_emojis(reply)
 
                         # Store reply in list
-                        replies.append(cleanReply)
+                        replies.append(reply)
 
                 # create a list that will be written to the csv
-                dataRows = [[clear_emojis(comment), commentLikes, replies, ]]
+                dataRows = [[clear_emojis(comment), commentLikes, replyCount, ]]
 
                 # need a try-catch for when demoji cannot clear all the emojies in the comment
                 try:

@@ -26,7 +26,7 @@ string welcomeWindow() {
     navBar.setFillColor(sf::Color(255, 0, 0));  // YouTube red
     navBar.setPosition(0.f, 50.f);
 
-    // Set up a logo
+    // Set up the logo
     sf::Texture logoTexture;
     logoTexture.loadFromFile("../tubetrawlerlogo.png");
 
@@ -109,7 +109,7 @@ string welcomeWindow() {
                         return vidId;
                     } else {
                         cout << "Input is invalid. Please enter a valid Youtube video URL\n";
-                        //TODO:: add a SFML text that appears when invalid input. possibly a boolean
+                        //TODO:: add a SFML text object that appears when invalid input. possibly a boolean
                         videoURL.clear();
                     }
                 }
