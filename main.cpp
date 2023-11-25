@@ -11,6 +11,7 @@ using namespace std;
 string welcomeWindow() {
     float windowWidth = 800;
     float windowHeight = 600;
+    bool validInput = true;
 
     sf::RenderWindow welWindow(sf::VideoMode(windowWidth, windowHeight), "TubeTrawler");
 
@@ -60,6 +61,17 @@ string welcomeWindow() {
     textBox.setPosition(sf::Vector2f(windowWidth/3.0f - 118, windowHeight/2.0f - 48));
     textBox.setFillColor(sf::Color(210,210,210));
 
+    string errorMsg = "Input is invalid. Please enter a valid Youtube video URL";
+    sf::Text invalidMsg;
+    invalidMsg.setFont(font);
+    invalidMsg.setString(errorMsg);
+    invalidMsg.setCharacterSize(18);
+    invalidMsg.setStyle(sf::Text::Bold);
+    invalidMsg.setFillColor(sf::Color(255, 127, 127));
+    sf::FloatRect invalidMsgRect = invalidMsg.getLocalBounds();
+    invalidMsg.setOrigin(invalidMsgRect.left + invalidMsgRect.width/2.0f, invalidMsgRect.top + invalidMsgRect.height/2.0f);
+    invalidMsg.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + 25));
+
     sf::Clock clock;
 
     while (welWindow.isOpen()) {
@@ -78,10 +90,12 @@ string welcomeWindow() {
             else if (event.type == sf::Event::TextEntered) {
                 if (std::isprint(event.text.unicode) && videoURL.size() < 43)
                     videoURL += event.text.unicode;
-
             }
 
             else if (event.type == sf::Event::KeyPressed) {
+                textBox.setFillColor(sf::Color(210,210,210));
+                validInput = true;
+
                 if (event.key.code == sf::Keyboard::BackSpace) {
                     if (!videoURL.empty()) {
                         videoURL.pop_back();
@@ -107,10 +121,14 @@ string welcomeWindow() {
                         cout << "Input is valid.\n";
                         welWindow.close();
                         return vidId;
-                    } else {
+                    }
+                    else {
                         cout << "Input is invalid. Please enter a valid Youtube video URL\n";
+                        validInput = false;
                         //TODO:: add a SFML text object that appears when invalid input. possibly a boolean
                         videoURL.clear();
+                        textBox.setFillColor(sf::Color(255, 127, 127));
+
                     }
                 }
             }
@@ -133,13 +151,14 @@ string welcomeWindow() {
 
         user.setString(videoURL + (show_cursor ? '_' : ' '));
 
-        welWindow.clear(sf::Color(40,40,40)); // youtube "almost black"
+        welWindow.clear(sf::Color(40,40,40)); // YouTube "almost black"
         welWindow.draw(textBox);
         welWindow.draw(user);
         welWindow.draw(navBar);
         welWindow.draw(header);
         welWindow.draw(logo);
         welWindow.draw(inputPromptText);
+        if (!validInput){welWindow.draw(invalidMsg);}
         welWindow.display();
 
     }
@@ -160,6 +179,8 @@ int main() {
         command += ID;
         system(command.c_str());
     }
+
+    cout << "Finished" << endl;
 
     //FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
     // prevents functionality, still would like to figure it out though
