@@ -72,6 +72,17 @@ string welcomeWindow() {
     invalidMsg.setOrigin(invalidMsgRect.left + invalidMsgRect.width/2.0f, invalidMsgRect.top + invalidMsgRect.height/2.0f);
     invalidMsg.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + 25));
 
+    //enter button png is used with permission from "https://www.flaticon.com/free-icons/enter" Enter icons created by Freepik
+    sf::Texture enterTexture;
+    enterTexture.loadFromFile("../enter.png");
+    sf::Sprite resultsButton;
+    resultsButton.setTexture(enterTexture);
+
+    sf::FloatRect enterRect = resultsButton.getLocalBounds();
+    resultsButton.setOrigin(invalidMsgRect.left + enterRect.width/2.0f, enterRect.top + enterRect.height/2.0f);
+    resultsButton.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + 110));
+    resultsButton.setScale(.2f, .2f);
+
     sf::Clock clock;
 
     while (welWindow.isOpen()) {
@@ -85,6 +96,41 @@ string welcomeWindow() {
 
             if (event.type == sf::Event::Closed) {
                 welWindow.close();
+            }
+            else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+
+                sf::Vector2i curPos = sf::Mouse::getPosition(welWindow);
+
+                if (curPos.x < 0 || curPos.x > windowWidth || curPos.y < 0 || curPos.y > windowHeight) {
+                    cout << "clicked out of bounds" << endl;
+                }
+                else if (curPos.y <= 450 && curPos.y >= 375 && curPos.x >= 350 && curPos.x <= 450) {
+                    cout << videoURL << endl;
+
+                    string vidId;
+                    //this try-catch stops error with input size < 11 chars
+                    try {
+                        vidId = videoURL.substr(32, 11);
+                    }
+                    catch (out_of_range&){
+                        videoURL.clear();
+                    }
+
+                    //regex to only allow 11 characters, upper and lower case letters, and the '-' symbol
+                    regex pattern("[a-zA-Z0-9\\-\\_]{11}");
+
+                    if (regex_match(vidId, pattern) && videoURL.substr(0,32) == "https://www.youtube.com/watch?v=") {
+                        welWindow.close();
+                        return vidId;
+                    }
+                    else {
+                        validInput = false;
+                        videoURL.clear();
+                        textBox.setFillColor(sf::Color(255, 127, 127));
+
+                    }
+
+                }
             }
 
             else if (event.type == sf::Event::TextEntered) {
@@ -118,14 +164,11 @@ string welcomeWindow() {
                     regex pattern("[a-zA-Z0-9\\-\\_]{11}");
 
                     if (regex_match(vidId, pattern) && videoURL.substr(0,32) == "https://www.youtube.com/watch?v=") {
-                        cout << "Input is valid.\n";
                         welWindow.close();
                         return vidId;
                     }
                     else {
-                        cout << "Input is invalid. Please enter a valid Youtube video URL\n";
                         validInput = false;
-                        //TODO:: add a SFML text object that appears when invalid input. possibly a boolean
                         videoURL.clear();
                         textBox.setFillColor(sf::Color(255, 127, 127));
 
@@ -158,6 +201,7 @@ string welcomeWindow() {
         welWindow.draw(header);
         welWindow.draw(logo);
         welWindow.draw(inputPromptText);
+        welWindow.draw(resultsButton);
         if (!validInput){welWindow.draw(invalidMsg);}
         welWindow.display();
 
@@ -182,7 +226,7 @@ int main() {
 
     cout << "Finished" << endl;
 
-    //FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
+    // FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
     // prevents functionality, still would like to figure it out though
 
     return 0;
