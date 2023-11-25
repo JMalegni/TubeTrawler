@@ -18,6 +18,9 @@ import sys
 
 # this function finds and removes all emojis in a string, I use it because you cannot write emojis to a csv file
 def clear_emojis(string):
+    for character in string:
+        if character == ',':
+            string = string.replace(character, ' ')
     dem = demoji.findall(string)
     for item in dem.keys():
         string = string.replace(item, '')
