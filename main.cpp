@@ -6,6 +6,8 @@
 #include <sstream>
 #include <fstream>
 #include <utility>
+#include <queue>
+#include "RBT.h"
 using namespace std;
 
 //SFML download and integration tutorial - https://dev.to/danielmelendezz/how-to-get-smfl-to-work-on-windows-using-clion-2bef
@@ -213,7 +215,7 @@ string welcomeWindow() {
 }
 
 
-void readfile(MaxHeap &value) {
+void readfile(RBT &myRBT, MaxHeap &myHeap, string choice) {
     std::fstream file("../test.csv");
     std::string line = "";
     getline(file, line);
@@ -225,7 +227,18 @@ void readfile(MaxHeap &value) {
         getline(splitter, likes, ',');
         std::string replies = "";
         getline(splitter, replies, ',');
-        value.insert(word, stoi(likes), stoi(replies));
+        if (choice == "MaxHeap")
+        {
+            myHeap.insert(word, stoi(likes), stoi(replies));
+        }
+        else if (choice == "RBT")
+        {
+            myRBT.insert(word, stoi(replies), stoi(likes));
+        }
+        else
+        {
+            //neither choice
+        }
     }
     return;
 };
@@ -244,10 +257,32 @@ int main() {
     }
 
     cout << "Finished" << endl;
-    MaxHeap value;
-    readfile(value);
-    std::pair<std::string, int> test = value.extract();
-    std::cout << test.first << " " << test.second << std::endl;
+    RBT myRBT;
+    MaxHeap myHeap;
+    string choice = "RBT"; //choice will be either "RBT" or "MaxHeap"
+
+    //FIX: set choice depending on button pressed
+
+    readfile(myRBT, myHeap, choice);
+    vector<string> results;
+
+    if (choice == "RBT")
+    {
+        results = myRBT.mostLiked(myRBT.getRoot());
+        cout << "By using a Red-Black Tree, we find the most liked comment to be: " << endl;
+    }
+    else if (choice == "MaxHeap")
+    {
+        results = myHeap.extract();
+        cout << "By using a Max Heap, we find the most liked comment to be: " << endl;
+    }
+    else
+    {
+        //neither choice
+    }
+
+    cout << '"' << results.at(0) << '"' << endl << "Likes: " << results.at(1) << endl << "Replies: " << results.at(2) << endl;
+
     // FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
     //  prevents functionality. Still would like to figure it out though
 

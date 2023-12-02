@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+using namespace std;
 
 //data of each element inside the heap
 struct Heap_data {
@@ -59,8 +60,11 @@ public:
         }
     }
     //extract the most like word
-    std::pair<std::string, int> extract () {
-        std::pair<std::string, int> result = std::make_pair(heap[0].word, heap[0].likes);
+    std::vector<std::string> extract () {
+        std::vector<std::string> result;
+        result.push_back(heap[0].word);
+        result.push_back(std::to_string(heap[0].likes));
+        result.push_back(std::to_string(heap[0].replies));
         heap[0] = heap[heap.size() - 1];
         heap.pop_back();
         heapify_down();
