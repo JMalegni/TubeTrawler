@@ -225,9 +225,8 @@ int main() {
     }
 
     cout << "Finished" << endl;
-
     // FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
-    // prevents functionality, still would like to figure it out though
+    //  prevents functionality. Still would like to figure it out though
 
     return 0;
 
