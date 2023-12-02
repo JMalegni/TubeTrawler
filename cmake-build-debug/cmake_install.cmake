@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/Jake/PycharmProjects/pythonProject/TubeTrawler
+# Install script for directory: C:/Users/blin1/Downloads/DSAproject3/TubeTrawler
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/Jake/PycharmProjects/pythonProject/TubeTrawler/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/blin1/Downloads/DSAproject3/TubeTrawler/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

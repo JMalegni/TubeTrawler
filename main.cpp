@@ -2,7 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <regex>
-
+#include "Maxheap.h"
+#include <sstream>
+#include <fstream>
+#include <utility>
 using namespace std;
 
 //SFML download and integration tutorial - https://dev.to/danielmelendezz/how-to-get-smfl-to-work-on-windows-using-clion-2bef
@@ -210,6 +213,22 @@ string welcomeWindow() {
 }
 
 
+void readfile(MaxHeap &value) {
+    std::fstream file("../test.csv");
+    std::string line = "";
+    getline(file, line);
+    while (getline(file, line)){
+        std::istringstream splitter(line);
+        std::string word = "";
+        getline(splitter, word, ',');
+        std::string likes = "";
+        getline(splitter, likes, ',');
+        std::string replies = "";
+        getline(splitter, replies, ',');
+        value.insert(word, stoi(likes), stoi(replies));
+    }
+    return;
+};
 
 int main() {
     string ID= welcomeWindow();
@@ -225,6 +244,10 @@ int main() {
     }
 
     cout << "Finished" << endl;
+    MaxHeap value;
+    readfile(value);
+    std::pair<std::string, int> test = value.extract();
+    std::cout << test.first << " " << test.second << std::endl;
     // FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
     //  prevents functionality. Still would like to figure it out though
 
