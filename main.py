@@ -40,6 +40,7 @@ def video_data(argv):
     viewCount = 0
     totLikes = 0
     numComments = 0
+    filename = "test.csv"
 
     # creating YouTube resource object
     youtube = build('youtube', 'v3',
@@ -56,9 +57,16 @@ def video_data(argv):
     try:
         if video_stats['items'][0]['kind'] != 'youtube#video':
             print("Not a correct YouTube video ID")
+            # this will erase the current data in the csv
+            badCSV = open(filename, 'w')
+            badCSV.truncate(0)
+            badCSV.close()
             return
     except IndexError:
         print("Not a YouTube video ID")
+        badCSV = open(filename, 'w')
+        badCSV.truncate(0)
+        badCSV.close()
         return
 
     # extracting statistics from the video_stats object
@@ -70,6 +78,9 @@ def video_data(argv):
             numComments = item['statistics']['commentCount']
         except(KeyError):
             print("This video does not have comments enabled")
+            badCSV = open(filename, 'w')
+            badCSV.truncate(0)
+            badCSV.close()
             print(title, " ", viewCount, " ", totLikes, " ", 0)
             return
 
@@ -81,8 +92,6 @@ def video_data(argv):
         videoId=video_id,
         maxResults=100
     ).execute()
-
-    filename = "test.csv"
 
     # first row of csv file
     statsRows = [[title, viewCount, totLikes, numComments, ]]
@@ -118,7 +127,7 @@ def video_data(argv):
                     for reply in item['replies']['comments']:
                         # Extract reply
                         reply = reply['snippet']['textDisplay']
-                        #cleanReply = clear_emojis(reply)
+                        # cleanReply = clear_emojis(reply)
 
                         # Store reply in list
                         replies.append(reply)
