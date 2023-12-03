@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/austi/source/repos/COP3530-PROJECT-3-GIT/TubeTrawler
+# Install script for directory: C:/Users/Jake/PycharmProjects/pythonProject/TubeTrawler
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/austi/source/repos/COP3530-PROJECT-3-GIT/TubeTrawler/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/Jake/PycharmProjects/pythonProject/TubeTrawler/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

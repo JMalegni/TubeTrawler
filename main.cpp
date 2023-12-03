@@ -13,7 +13,7 @@ using namespace std;
 //SFML download and integration tutorial - https://dev.to/danielmelendezz/how-to-get-smfl-to-work-on-windows-using-clion-2bef
 
 //WelcomeWindow Function mostly recycled from Joseph's Minesweeper project from COP3503
-string welcomeWindow() {
+string welcomeWindow(const string& dataStruct) {
     float windowWidth = 800;
     float windowHeight = 600;
     bool validInput = true;
@@ -77,16 +77,16 @@ string welcomeWindow() {
     invalidMsg.setOrigin(invalidMsgRect.left + invalidMsgRect.width/2.0f, invalidMsgRect.top + invalidMsgRect.height/2.0f);
     invalidMsg.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + 25));
 
-    //enter button png is used with permission from "https://www.flaticon.com/free-icons/enter" Enter icons created by Freepik
-    sf::Texture enterTexture;
-    enterTexture.loadFromFile("../enter.png");
-    sf::Sprite resultsButton;
-    resultsButton.setTexture(enterTexture);
+    //button background png is used with permission from "https://www.flaticon.com/free-icons/enter" Enter icons created by Freepik
+    sf::Texture RBTTexture;
+    RBTTexture.loadFromFile("../RBTButton.png");
+    sf::Sprite RBTButton;
+    RBTButton.setTexture(RBTTexture);
 
-    sf::FloatRect enterRect = resultsButton.getLocalBounds();
-    resultsButton.setOrigin(invalidMsgRect.left + enterRect.width/2.0f, enterRect.top + enterRect.height/2.0f);
-    resultsButton.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + 110));
-    resultsButton.setScale(.2f, .2f);
+    sf::FloatRect enterRect = RBTButton.getLocalBounds();
+    RBTButton.setOrigin(invalidMsgRect.left + enterRect.width/2.0f, enterRect.top + enterRect.height/2.0f);
+    RBTButton.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + 110));
+    RBTButton.setScale(.25f, .25f);
 
     sf::Clock clock;
 
@@ -206,7 +206,7 @@ string welcomeWindow() {
         welWindow.draw(header);
         welWindow.draw(logo);
         welWindow.draw(inputPromptText);
-        welWindow.draw(resultsButton);
+        welWindow.draw(RBTButton);
         if (!validInput){welWindow.draw(invalidMsg);}
         welWindow.display();
 
@@ -244,7 +244,8 @@ void readfile(RBT &myRBT, MaxHeap &myHeap, string choice) {
 };
 
 int main() {
-    string ID= welcomeWindow();
+    string choice = ""; //choice will be either "RBT" or "MaxHeap"
+    string ID = welcomeWindow(choice);
 
     cout << "---" << ID << "---" << endl;
 
@@ -256,13 +257,12 @@ int main() {
         system(command.c_str());
     }
 
-    cout << "Finished" << endl;
+    cout << "Finished making csv" << endl;
+
     RBT myRBT;
     MaxHeap myHeap;
-    string choice = "RBT"; //choice will be either "RBT" or "MaxHeap"
 
     //FIX: set choice depending on button pressed
-
     readfile(myRBT, myHeap, choice);
     vector<string> results;
 
@@ -278,13 +278,12 @@ int main() {
     }
     else
     {
-        //neither choice
+        return 0;//neither choice
     }
 
     cout << '"' << results.at(0) << '"' << endl << "Likes: " << results.at(1) << endl << "Replies: " << results.at(2) << endl;
 
-    // FIXME:: There is an error that pops up in very large videos(comments wise) but I don't believe that it
-    //  prevents functionality. Still would like to figure it out though
+    // FIXME: There is an error that pops up in very large videos(at about half a million comments)
 
     return 0;
 
