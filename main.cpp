@@ -193,32 +193,6 @@ string welcomeWindow(string& dataStruct) {
                     }
                 }
 
-                if (event.key.code == sf::Keyboard::Return) {
-                    cout << videoURL << endl;
-
-                    string vidId;
-                    //this try-catch stops error with input size < 11 chars
-                    try {
-                        vidId = videoURL.substr(32, 11);
-                    }
-                    catch (out_of_range&){
-                        videoURL.clear();
-                    }
-
-                    //regex to only allow 11 characters, upper and lower case letters, and the '-' symbol
-                    regex pattern("[a-zA-Z0-9\\-\\_]{11}");
-
-                    if (regex_match(vidId, pattern) && videoURL.substr(0,32) == "https://www.youtube.com/watch?v=") {
-                        welWindow.close();
-                        return vidId;
-                    }
-                    else {
-                        validInput = false;
-                        videoURL.clear();
-                        textBox.setFillColor(sf::Color(255, 127, 127));
-
-                    }
-                }
             }
 
             else if (event.key.control && event.key.code == sf::Keyboard::V) {
@@ -256,7 +230,7 @@ string welcomeWindow(string& dataStruct) {
 }
 
 
-void readfile(RBT &myRBT, MaxHeap &myHeap, string choice) {
+void readfile(RBT &myRBT, MaxHeap &myHeap, const string& choice) {
     std::fstream file("../test.csv");
     std::string line = "";
     getline(file, line);
@@ -281,7 +255,45 @@ void readfile(RBT &myRBT, MaxHeap &myHeap, string choice) {
             //neither choice
         }
     }
-    return;
+};
+void resultWindow(string systemCommand){
+    float windowWidth = 800;
+    float windowHeight = 600;
+
+    sf::RenderWindow resultWindow(sf::VideoMode(windowWidth, windowHeight), "TubeTrawler Results");
+
+    // font used with permission - https://www.fontsquirrel.com/fonts/open-sans
+    sf::Font font;
+    font.loadFromFile("../OpenSans-Regular.ttf");
+
+    string loadMsg = "Loading Comments";
+    sf::Text loadMsgText;
+    loadMsgText.setFont(font);
+    loadMsgText.setString(loadMsg);
+    loadMsgText.setCharacterSize(35);
+    loadMsgText.setFillColor(sf::Color::White);
+    loadMsgText.setStyle(sf::Text::Bold);
+    sf::FloatRect loadMsgRect = loadMsgText.getLocalBounds();
+    loadMsgText.setOrigin(loadMsgRect.left + loadMsgRect.width/2.0f, loadMsgRect.top + loadMsgRect.height/2.0f);
+    loadMsgText.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f));
+
+    resultWindow.clear(sf::Color(40,40,40));
+    resultWindow.draw(loadMsgText);
+    resultWindow.display();
+
+    system(systemCommand.c_str());
+
+    for (int i = 0; i < 200; i++) {
+        loadMsg = "Done!";
+        loadMsgText.setString(loadMsg);
+        loadMsgRect = loadMsgText.getLocalBounds();
+        loadMsgText.setOrigin(loadMsgRect.left + loadMsgRect.width/2.0f, loadMsgRect.top + loadMsgRect.height/2.0f);
+        resultWindow.clear(sf::Color(40, 40, 40));
+        resultWindow.draw(loadMsgText);
+        resultWindow.display();
+    }
+
+
 };
 
 int main() {
@@ -292,10 +304,11 @@ int main() {
 
     // need to have python as path variable
     if (!ID.empty()) {
-        //Figured out how to pass a variable to system() with help from user Skurmedel's solution at https://stackoverflow.com/questions/4907805/using-variables-in-system-function-c
+        //Figured out how to pass a variable to system() with help from user Skurmedel's solution at
+        // https://stackoverflow.com/questions/4907805/using-variables-in-system-function-c
         string command = "cd .. && python main.py ";
         command += ID;
-        system(command.c_str());
+        resultWindow(command);
     }
 
     cout << "Finished making csv" << endl;
@@ -303,9 +316,9 @@ int main() {
     RBT myRBT;
     MaxHeap myHeap;
 
-    //FIX: set choice depending on button pressed
     readfile(myRBT, myHeap, choice);
     vector<string> results;
+    results.clear();
 
     if (choice == "RBT")
     {
@@ -324,7 +337,7 @@ int main() {
 
     cout << '"' << results.at(0) << '"' << endl << "Likes: " << results.at(1) << endl << "Replies: " << results.at(2) << endl;
 
-    // FIXME: There is an error that pops up in very large videos(at about half a million comments)
+    /* FIXME: There is an error that pops up in very large videos(at about half a million comments) Best guess right now is that its an issue with how I am continuously getting comments with the python script*/
 
     return 0;
 
