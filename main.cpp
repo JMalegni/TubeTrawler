@@ -256,7 +256,7 @@ void readfile(RBT &myRBT, MaxHeap &myHeap, const string& choice) {
         }
     }
 };
-void resultWindow(string systemCommand){
+void resultWindow(string systemCommand, string dataStructChoice){
     float windowWidth = 800;
     float windowHeight = 600;
 
@@ -277,12 +277,15 @@ void resultWindow(string systemCommand){
     loadMsgText.setOrigin(loadMsgRect.left + loadMsgRect.width/2.0f, loadMsgRect.top + loadMsgRect.height/2.0f);
     loadMsgText.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f));
 
+    //displaying loading screen so the user isn't just left without anything to look at while the csv is being filled
     resultWindow.clear(sf::Color(40,40,40));
     resultWindow.draw(loadMsgText);
     resultWindow.display();
 
+    // this line opens terminal and calls the python script with the chosen video ID
     system(systemCommand.c_str());
 
+    // Displays "Done!" for a short while before displaying results
     for (int i = 0; i < 200; i++) {
         loadMsg = "Done!";
         loadMsgText.setString(loadMsg);
@@ -293,49 +296,95 @@ void resultWindow(string systemCommand){
         resultWindow.display();
     }
 
-
-};
-
-int main() {
-    string choice = ""; //choice will be either "RBT" or "MaxHeap"
-    string ID = welcomeWindow(choice);
-
-    cout << "---" << ID << "---" << endl;
-
-    // need to have python as path variable
-    if (!ID.empty()) {
-        //Figured out how to pass a variable to system() with help from user Skurmedel's solution at
-        // https://stackoverflow.com/questions/4907805/using-variables-in-system-function-c
-        string command = "cd .. && python main.py ";
-        command += ID;
-        resultWindow(command);
-    }
-
-    cout << "Finished making csv" << endl;
-
     RBT myRBT;
     MaxHeap myHeap;
 
-    readfile(myRBT, myHeap, choice);
+    readfile(myRBT, myHeap, dataStructChoice);
     vector<string> results;
     results.clear();
 
-    if (choice == "RBT")
+    if (dataStructChoice == "RBT")
     {
         results = myRBT.mostLiked(myRBT.getRoot());
         cout << "By using a Red-Black Tree, we find the most liked comment to be: " << endl;
     }
-    else if (choice == "MaxHeap")
+    else if (dataStructChoice == "MaxHeap")
     {
         results = myHeap.extract();
         cout << "By using a Max Heap, we find the most liked comment to be: " << endl;
     }
     else
     {
-        return 0;//neither choice
+        return;//neither choice
+    }
+    cout << '"' << results.at(0) << '"' << endl << "Likes: " << results.at(1) << endl << "Replies: " << results.at(2) << endl;
+
+    while (resultWindow.isOpen()) {
+        sf::Text header("TubeTrawler Results", font, 24);
+        header.setFillColor(sf::Color::White);
+        header.setPosition(10.f, 10.f);
+
+        sf::RectangleShape navBar(sf::Vector2f(800.f, 15.f));
+        navBar.setFillColor(sf::Color(255, 0, 0));  // YouTube red
+        navBar.setPosition(0.f, 50.f);
+
+        // Set up the logo
+        sf::Texture logoTexture;
+        logoTexture.loadFromFile("../tubetrawlerlogo.png");
+
+        sf::Sprite logo(logoTexture);
+        logo.setScale(0.14f, 0.14f);  // Adjust the scale as needed
+        logo.setPosition(675.f, 10.f);
+
+        sf::Event event;
+
+        while (resultWindow.pollEvent(event)) {
+
+            sf::Cursor cursor;
+            if (cursor.loadFromSystem(sf::Cursor::Hand)) {
+                resultWindow.setMouseCursor(cursor);
+            }
+
+            if (event.type == sf::Event::Closed) {
+                resultWindow.close();
+            }
+        }
+
+
+
+
+
+
+
+        resultWindow.clear(sf::Color(40,40,40));
+        resultWindow.draw(navBar);
+        resultWindow.draw(header);
+        resultWindow.draw(logo);
+        resultWindow.display();
     }
 
-    cout << '"' << results.at(0) << '"' << endl << "Likes: " << results.at(1) << endl << "Replies: " << results.at(2) << endl;
+};
+
+int main() {
+    string choice = ""; //choice will be either "RBT" or "MaxHeap"
+    string ID = welcomeWindow(choice);
+    string command = "";
+
+    cout << "---" << ID << "---" << endl;
+
+    // if the entered input is correct, set up the command to run the python script
+    // need to have python as path variable
+    if (!ID.empty()) {
+        //Figured out how to pass a variable to system() with help from user Skurmedel's solution at
+        // https://stackoverflow.com/questions/4907805/using-variables-in-system-function-c
+        command = "cd .. && python main.py ";
+        command += ID;
+    }
+
+    //call the results window which
+    if (!command.empty()) {
+        resultWindow(command, choice);
+    }
 
     /* FIXME: There is an error that pops up in very large videos(at about half a million comments) Best guess right now is that its an issue with how I am continuously getting comments with the python script*/
 

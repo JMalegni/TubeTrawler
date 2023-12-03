@@ -63,7 +63,7 @@ def video_data(argv):
 
     # extracting statistics from the video_stats object
     for item in video_stats['items']:
-        title = item['snippet']['title']
+        title = clear_emojis(item['snippet']['title'])
         viewCount = item['statistics']['viewCount']
         totLikes = item['statistics']['likeCount']
         try:
