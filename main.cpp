@@ -13,7 +13,7 @@ using namespace std;
 //SFML download and integration tutorial - https://dev.to/danielmelendezz/how-to-get-smfl-to-work-on-windows-using-clion-2bef
 
 //WelcomeWindow Function mostly recycled from Joseph's Minesweeper project from COP3503
-string welcomeWindow(const string& dataStruct) {
+string welcomeWindow(string& dataStruct) {
     float windowWidth = 800;
     float windowHeight = 600;
     bool validInput = true;
@@ -83,10 +83,20 @@ string welcomeWindow(const string& dataStruct) {
     sf::Sprite RBTButton;
     RBTButton.setTexture(RBTTexture);
 
-    sf::FloatRect enterRect = RBTButton.getLocalBounds();
-    RBTButton.setOrigin(invalidMsgRect.left + enterRect.width/2.0f, enterRect.top + enterRect.height/2.0f);
-    RBTButton.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + 110));
+    sf::FloatRect RBTRect = RBTButton.getLocalBounds();
+    RBTButton.setOrigin(invalidMsgRect.left + RBTRect.width/2.0f, RBTRect.top + RBTRect.height/2.0f);
+    RBTButton.setPosition(sf::Vector2f(windowWidth/2.0f + 100, windowHeight/2.0f + 110));
     RBTButton.setScale(.25f, .25f);
+
+    sf::Texture MaxHeapTexture;
+    MaxHeapTexture.loadFromFile("../MaxHeapButton.png");
+    sf::Sprite MaxHeapButton;
+    MaxHeapButton.setTexture(MaxHeapTexture);
+
+    sf::FloatRect MaxHeapRect = MaxHeapButton.getLocalBounds();
+    MaxHeapButton.setOrigin(invalidMsgRect.left + MaxHeapRect.width/2.0f, MaxHeapRect.top + MaxHeapRect.height/2.0f);
+    MaxHeapButton.setPosition(sf::Vector2f(windowWidth/2.0f - 100, windowHeight/2.0f + 110));
+    MaxHeapButton.setScale(.25f, .25f);
 
     sf::Clock clock;
 
@@ -105,11 +115,41 @@ string welcomeWindow(const string& dataStruct) {
             else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
                 sf::Vector2i curPos = sf::Mouse::getPosition(welWindow);
+                cout << curPos.x << " , " << curPos.y << endl;
 
                 if (curPos.x < 0 || curPos.x > windowWidth || curPos.y < 0 || curPos.y > windowHeight) {
                     cout << "clicked out of bounds" << endl;
                 }
-                else if (curPos.y <= 450 && curPos.y >= 375 && curPos.x >= 350 && curPos.x <= 450) {
+                else if (curPos.y <= 455 && curPos.y >= 365 && curPos.x >= 240 && curPos.x <= 360) {
+                    dataStruct = "MaxHeap";
+                    cout << videoURL << endl;
+
+                    string vidId;
+                    //this try-catch stops error with input size < 11 chars
+                    try {
+                        vidId = videoURL.substr(32, 11);
+                    }
+                    catch (out_of_range&){
+                        videoURL.clear();
+                    }
+
+                    //regex to only allow 11 characters, upper and lower case letters, and the '-' symbol
+                    regex pattern("[a-zA-Z0-9\\-\\_]{11}");
+
+                    if (regex_match(vidId, pattern) && videoURL.substr(0,32) == "https://www.youtube.com/watch?v=") {
+                        welWindow.close();
+                        return vidId;
+                    }
+                    else {
+                        validInput = false;
+                        videoURL.clear();
+                        textBox.setFillColor(sf::Color(255, 127, 127));
+
+                    }
+
+                }
+                else if (curPos.y <= 455 && curPos.y >= 365 && curPos.x >= 440 && curPos.x <= 560) {
+                    dataStruct = "RBT";
                     cout << videoURL << endl;
 
                     string vidId;
@@ -207,6 +247,7 @@ string welcomeWindow(const string& dataStruct) {
         welWindow.draw(logo);
         welWindow.draw(inputPromptText);
         welWindow.draw(RBTButton);
+        welWindow.draw(MaxHeapButton);
         if (!validInput){welWindow.draw(invalidMsg);}
         welWindow.display();
 
