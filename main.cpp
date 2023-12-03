@@ -233,6 +233,7 @@ string welcomeWindow(string& dataStruct) {
 void readfile(RBT &myRBT, MaxHeap &myHeap, const string& choice) {
     std::fstream file("../test.csv");
     std::string line = "";
+    //reading the first line which is garbage for the data structures
     getline(file, line);
     while (getline(file, line)){
         std::istringstream splitter(line);
@@ -286,7 +287,7 @@ void resultWindow(string systemCommand, string dataStructChoice){
     system(systemCommand.c_str());
 
     // Displays "Done!" for a short while before displaying results
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 250; i++) {
         loadMsg = "Done!";
         loadMsgText.setString(loadMsg);
         loadMsgRect = loadMsgText.getLocalBounds();
@@ -295,6 +296,40 @@ void resultWindow(string systemCommand, string dataStructChoice){
         resultWindow.draw(loadMsgText);
         resultWindow.display();
     }
+
+    // reading the first line of the csv to get the general video statistics (title, views, likes, comments)
+    std::fstream file("../test.csv");
+    std::string vidStats = "";
+    getline(file, vidStats);
+
+    string vidTitle = "Video Title: " + vidStats.substr(0,vidStats.find_first_of(','));
+    sf::Text vidTitleText;
+    vidTitleText.setFont(font);
+    vidTitleText.setString(vidTitle);
+    vidTitleText.setCharacterSize(22);
+    vidTitleText.setStyle(sf::Text::Bold);
+    vidTitleText.setFillColor(sf::Color::White);
+    sf::FloatRect vidTitleRect = vidTitleText.getLocalBounds();
+    vidTitleText.setOrigin(vidTitleRect.left + vidTitleRect.width/2.0f, vidTitleRect.top + vidTitleRect.height/2.0f);
+    vidTitleText.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f - 150));
+
+    vidStats = vidStats.substr(vidStats.find_first_of(',') + 1);
+
+    string vidNumStats = "Views: " + vidStats.substr(0,vidStats.find_first_of(','));
+    vidStats = vidStats.substr(vidStats.find_first_of(',') + 1);
+    vidNumStats += "; Likes: " + vidStats.substr(0,vidStats.find_first_of(','));
+    vidStats = vidStats.substr(vidStats.find_first_of(',') + 1);
+    vidNumStats += "; Comments: " + vidStats.substr(0);
+
+    sf::Text vidViewsText;
+    vidViewsText.setFont(font);
+    vidViewsText.setString(vidNumStats);
+    vidViewsText.setCharacterSize(20);
+    vidViewsText.setStyle(sf::Text::Bold);
+    vidViewsText.setFillColor(sf::Color::White);
+    sf::FloatRect vidViewsRect = vidViewsText.getLocalBounds();
+    vidViewsText.setOrigin(vidViewsRect.left + vidViewsRect.width/2.0f, vidViewsRect.top + vidViewsRect.height/2.0f);
+    vidViewsText.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f-125));
 
     RBT myRBT;
     MaxHeap myHeap;
@@ -319,23 +354,60 @@ void resultWindow(string systemCommand, string dataStructChoice){
     }
     cout << '"' << results.at(0) << '"' << endl << "Likes: " << results.at(1) << endl << "Replies: " << results.at(2) << endl;
 
+
+
+    sf::Text header("TubeTrawler Results", font, 24);
+    header.setFillColor(sf::Color::White);
+    header.setPosition(10.f, 10.f);
+
+    sf::RectangleShape navBar(sf::Vector2f(800.f, 15.f));
+    navBar.setFillColor(sf::Color(255, 0, 0));  // YouTube red
+    navBar.setPosition(0.f, 50.f);
+
+    // Set up the logo
+    sf::Texture logoTexture;
+    logoTexture.loadFromFile("../tubetrawlerlogo.png");
+
+    sf::Sprite logo(logoTexture);
+    logo.setScale(0.14f, 0.14f);  // Adjust the scale as needed
+    logo.setPosition(675.f, 10.f);
+
+    string MLComment = "\"" + results.at(0) + "\"";
+    sf::Text MLCommentText;
+    MLCommentText.setFont(font);
+    MLCommentText.setString(MLComment);
+    MLCommentText.setCharacterSize(20);
+    MLCommentText.setStyle(sf::Text::Bold);
+    MLCommentText.setFillColor(sf::Color::White);
+
+    //Credit for following for loop to Laurent Gomila - SFML developer, found solution for text wrapping at
+    //https://en.sfml-dev.org/forums/index.php?topic=20346.0
+    for (int i = 0; i < MLCommentText.getString().getSize(); ++i)
+    {
+        if (MLCommentText.findCharacterPos(i).x > windowWidth - 100)
+        {
+            string str = MLCommentText.getString();
+            str.insert(i, "\n");
+            MLCommentText.setString(str);
+        }
+    }
+
+    sf::FloatRect MLCommentRect = MLCommentText.getLocalBounds();
+    MLCommentText.setOrigin(MLCommentRect.left + MLCommentRect.width/2.0f, MLCommentRect.top + MLCommentRect.height/2.0f);
+    MLCommentText.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f));
+
+    string commentStats = "Is the Most Liked Comment, With " + results.at(1) + " Likes, and " + results.at(2) + " Replies";
+    sf::Text commentStatsText;
+    commentStatsText.setFont(font);
+    commentStatsText.setString(commentStats);
+    commentStatsText.setCharacterSize(20);
+    commentStatsText.setStyle(sf::Text::Bold);
+    commentStatsText.setFillColor(sf::Color::White);
+    sf::FloatRect commentStatsRect = commentStatsText.getLocalBounds();
+    commentStatsText.setOrigin(commentStatsRect.left + commentStatsRect.width/2.0f, commentStatsRect.top + commentStatsRect.height/2.0f);
+    commentStatsText.setPosition(sf::Vector2f(windowWidth/2.0f, windowHeight/2.0f + MLCommentText.getGlobalBounds().height+20));
+
     while (resultWindow.isOpen()) {
-        sf::Text header("TubeTrawler Results", font, 24);
-        header.setFillColor(sf::Color::White);
-        header.setPosition(10.f, 10.f);
-
-        sf::RectangleShape navBar(sf::Vector2f(800.f, 15.f));
-        navBar.setFillColor(sf::Color(255, 0, 0));  // YouTube red
-        navBar.setPosition(0.f, 50.f);
-
-        // Set up the logo
-        sf::Texture logoTexture;
-        logoTexture.loadFromFile("../tubetrawlerlogo.png");
-
-        sf::Sprite logo(logoTexture);
-        logo.setScale(0.14f, 0.14f);  // Adjust the scale as needed
-        logo.setPosition(675.f, 10.f);
-
         sf::Event event;
 
         while (resultWindow.pollEvent(event)) {
@@ -352,14 +424,15 @@ void resultWindow(string systemCommand, string dataStructChoice){
 
 
 
-
-
-
-
         resultWindow.clear(sf::Color(40,40,40));
         resultWindow.draw(navBar);
         resultWindow.draw(header);
         resultWindow.draw(logo);
+        resultWindow.draw(vidTitleText);
+        resultWindow.draw(vidViewsText);
+        resultWindow.draw(MLCommentText);
+        resultWindow.draw(commentStatsText);
+
         resultWindow.display();
     }
 
